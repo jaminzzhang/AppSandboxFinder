@@ -7,6 +7,8 @@
 //
 
 #import "ASAppDelegate.h"
+#import "ASFinderViewController.h"
+#import "ASConstants.h"
 
 @implementation ASAppDelegate
 
@@ -15,6 +17,13 @@
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
     self.window.backgroundColor = [UIColor whiteColor];
+    
+    ASFinderViewController * finderViewController = [[ASFinderViewController alloc] initWithPath:NSHomeDirectory()];
+    UINavigationController * navigationController = [[UINavigationController alloc] initWithRootViewController:finderViewController];
+    self.window.rootViewController = navigationController;
+    ASRelease(finderViewController);
+    ASRelease(navigationController);
+    
     [self.window makeKeyAndVisible];
     return YES;
 }
