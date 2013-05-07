@@ -215,7 +215,7 @@
     
     
     UIImage *iconImage = nil;
-    NSString *iconFileName = [NSString stringWithFormat:@"icon_file_%@.png", extension];
+    NSString *iconFileName = [NSString stringWithFormat:@"as_icon_file_%@.png", extension];
     iconImage = [UIImage imageNamed:iconFileName];
     if (iconImage == nil) {
         
@@ -229,7 +229,7 @@
             extension = @"unknown";
         }
         
-        iconFileName = [NSString stringWithFormat:@"icon_file_%@.png", extension];
+        iconFileName = [NSString stringWithFormat:@"as_icon_file_%@.png", extension];
         iconImage = [UIImage imageNamed:iconFileName];
         
     }
@@ -241,7 +241,7 @@
 + (UIImage *)getFileIcon:(id<ASFile>)file
 {
     if ([file isKindOfClass:[ASDir class]]) {
-        return [UIImage imageNamed:@"icon_file_folder.png"];
+        return [UIImage imageNamed:@"as_icon_file_folder.png"];
     } else {
         return [ASFileManager getFileIconOfName:file.name];
     }
