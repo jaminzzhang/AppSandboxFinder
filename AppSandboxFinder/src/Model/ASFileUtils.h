@@ -1,5 +1,5 @@
 //
-//  ASFileManager.h
+//  ASFileUtils.h
 //  AppSandboxFinder
 //
 //  Created by Jamin on 13-4-6.
@@ -10,10 +10,12 @@
 #import "ASFile.h"
 #import "ASDir.h"
 
-@interface ASFileManager : NSObject
+@interface ASFileUtils : NSObject
 
 + (BOOL)checkFileExists:(NSString *)path;
+
 + (NSMutableArray *)localFilesAtPath:(NSString *)path;
++ (NSMutableArray *)localFilesInDir:(ASDir *)dir;
 
 
 + (UIImage *)getFileIconOfName:(NSString *)fileName;

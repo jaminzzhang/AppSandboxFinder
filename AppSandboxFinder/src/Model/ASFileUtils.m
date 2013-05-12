@@ -1,15 +1,15 @@
 //
-//  ASFileManager.m
+//  ASFileUtils.m
 //  AppSandboxFinder
 //
 //  Created by Jamin on 13-4-6.
 //  Copyright (c) 2013年 Jaminz. All rights reserved.
 //
 
-#import "ASFileManager.h"
+#import "ASFileUtils.h"
 #import "ASConstants.h"
 
-@implementation ASFileManager
+@implementation ASFileUtils
 
 
 
@@ -99,12 +99,19 @@
 
 + (NSMutableArray *)localFilesAtPath:(NSString *)path
 {
-    BOOL isExist = [ASFileManager checkFileExists:path];
+    ASDir * dir = ASReturnAutoreleased([[ASDir alloc] initWithPath:path]);
+    return [ASFileUtils localFilesInDir:dir];
+}
+
+
++ (NSMutableArray *)localFilesInDir:(ASDir *)dir
+{
+    BOOL isExist = [ASFileUtils checkFileExists:dir.path];
     if (isExist) {
         
         NSMutableArray * subFiles = [NSMutableArray array];
         NSMutableArray * subDirs = [NSMutableArray array];
-        NSDirectoryEnumerator *dirEnumerator = [[NSFileManager defaultManager] enumeratorAtURL:[NSURL fileURLWithPath:path]
+        NSDirectoryEnumerator *dirEnumerator = [[NSFileManager defaultManager] enumeratorAtURL:[NSURL fileURLWithPath:dir.path]
                                                                     includingPropertiesForKeys:nil
                                                                                        options:(NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsHiddenFiles)
                                                                                   errorHandler:nil];
@@ -115,62 +122,64 @@
             NSNumber *isDirectory;
             [theURL getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:NULL];
             
-            NSString * subPath = [path stringByAppendingPathComponent:fileName];
+            NSString * subPath = [dir.path stringByAppendingPathComponent:fileName];
             
             // Ignore subFiles under the _extras directory
             if ([isDirectory boolValue] == YES) {
-                ASDir *dir = [[ASDir alloc] init];
-                dir.name = fileName;
-                dir.path = subPath;
+                ASDir *subDir = [[ASDir alloc] init];
+                subDir.name = fileName;
+                subDir.path = subPath;
+                subDir.fatherDir = dir;
                 
                 NSInteger dirCount = subDirs.count;
                 
                 if (dirCount == 0) {
-                    [subDirs addObject:dir];
-                
+                    [subDirs addObject:subDir];
+                    
                 } else {
                     for (NSInteger i = 0; i < dirCount; i++) {
                         ASDir *aDir = [subDirs objectAtIndex:i];
-                        if (NSOrderedAscending == [dir.name localizedStandardCompare:aDir.name]) {
-                            [subDirs insertObject:dir atIndex:i];
+                        if (NSOrderedAscending == [subDir.name localizedStandardCompare:aDir.name]) {
+                            [subDirs insertObject:subDir atIndex:i];
                             break;
                         }
                         
                         //遍历到最后，没有找到合适的位置插入，直接加到队尾
                         if (i == dirCount - 1) {
-                            [subDirs addObject:dir];
+                            [subDirs addObject:subDir];
                         }
                     }
                 }
                 
                 ASRelease(dir);
-
+                
             } else {
-                ASFile *file = [[ASFile alloc] init];
-                file.name = fileName;
-                file.path = subPath;
+                ASFile *subFile = [[ASFile alloc] init];
+                subFile.name = fileName;
+                subFile.path = subPath;
+                subFile.fatherDir = dir;
                 NSInteger filesCount = subFiles.count;
                 
                 if (filesCount  == 0) {
-                    [subFiles addObject:file];
+                    [subFiles addObject:subFile];
                     
                 } else {
                     for (NSInteger i = 0; i < filesCount; i++) {
                         ASFile *aFile = [subFiles objectAtIndex:i];
-                        if (NSOrderedAscending == [file.name localizedStandardCompare:aFile.name]) {
-                            [subFiles insertObject:file atIndex:i];
+                        if (NSOrderedAscending == [subFile.name localizedStandardCompare:aFile.name]) {
+                            [subFiles insertObject:subFile atIndex:i];
                             break;
                         }
                         
                         if (i == filesCount - 1) {
-                            [subFiles addObject:file];
+                            [subFiles addObject:subFile];
                         }
                         
                     }
                 }
                 
-                ASRelease(file);
-
+                ASRelease(subFile);
+                
             }
         }
         
@@ -180,6 +189,7 @@
     }
     
     return nil;
+
 }
 
 
@@ -243,7 +253,7 @@
     if ([file isKindOfClass:[ASDir class]]) {
         return [UIImage imageNamed:@"as_icon_file_folder.png"];
     } else {
-        return [ASFileManager getFileIconOfName:file.name];
+        return [ASFileUtils getFileIconOfName:file.name];
     }
 }
 

@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		ED02A789171012F500EED7D7 /* ASFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = ED02A788171012F500EED7D7 /* ASFileManager.m */; };
+		ED02A789171012F500EED7D7 /* ASFileUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = ED02A788171012F500EED7D7 /* ASFileUtils.m */; };
 		ED16A6AD170D90F4002331BB /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED16A6AC170D90F4002331BB /* UIKit.framework */; };
 		ED16A6AF170D90F4002331BB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED16A6AE170D90F4002331BB /* Foundation.framework */; };
 		ED16A6B1170D90F4002331BB /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED16A6B0170D90F4002331BB /* CoreGraphics.framework */; };
@@ -181,8 +181,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		ED02A787171012F500EED7D7 /* ASFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASFileManager.h; sourceTree = "<group>"; };
-		ED02A788171012F500EED7D7 /* ASFileManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ASFileManager.m; sourceTree = "<group>"; };
+		ED02A787171012F500EED7D7 /* ASFileUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASFileUtils.h; sourceTree = "<group>"; };
+		ED02A788171012F500EED7D7 /* ASFileUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ASFileUtils.m; sourceTree = "<group>"; };
 		ED16A6A9170D90F4002331BB /* AppSandboxFinder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AppSandboxFinder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED16A6AC170D90F4002331BB /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		ED16A6AE170D90F4002331BB /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -636,8 +636,8 @@
 				EDF01E66171001660003DEC1 /* ASFile.m */,
 				EDF01E681710018E0003DEC1 /* ASDir.h */,
 				EDF01E691710018E0003DEC1 /* ASDir.m */,
-				ED02A787171012F500EED7D7 /* ASFileManager.h */,
-				ED02A788171012F500EED7D7 /* ASFileManager.m */,
+				ED02A787171012F500EED7D7 /* ASFileUtils.h */,
+				ED02A788171012F500EED7D7 /* ASFileUtils.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -910,7 +910,7 @@
 				EDF01E67171001660003DEC1 /* ASFile.m in Sources */,
 				EDF01E6A1710018E0003DEC1 /* ASDir.m in Sources */,
 				EDF01E6D171001D40003DEC1 /* ASFinderViewController.m in Sources */,
-				ED02A789171012F500EED7D7 /* ASFileManager.m in Sources */,
+				ED02A789171012F500EED7D7 /* ASFileUtils.m in Sources */,
 				EDA137121728D4E300D4A46A /* ASContentViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

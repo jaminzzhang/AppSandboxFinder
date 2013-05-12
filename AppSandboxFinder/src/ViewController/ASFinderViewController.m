@@ -10,7 +10,7 @@
 #import "ASContentViewController.h"
 
 #import "ASConstants.h"
-#import "ASFileManager.h"
+#import "ASFileUtils.h"
 
 @interface ASFinderViewController ()
 
@@ -61,7 +61,7 @@
     self.title = self.currentDir.name;
     
     self.clearsSelectionOnViewWillAppear = YES;
-    self.localFileList = [ASFileManager localFilesAtPath:self.currentPath];
+    self.localFileList = [ASFileUtils localFilesAtPath:self.currentPath];
     [self.tableView reloadData];
 }
 
@@ -114,7 +114,7 @@
     }
     id<ASFile> file = [self.localFileList objectAtIndex:indexPath.row];
     cell.textLabel.text = file.name;
-    cell.imageView.image = [ASFileManager getFileIcon:file];
+    cell.imageView.image = [ASFileUtils getFileIcon:file];
     
     return cell;
 }
