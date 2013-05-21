@@ -90,11 +90,80 @@
 
 
 
+
++ (UIImage *)getFileIconOfName:(NSString *)fileName
+{
+    NSString *extension = nil;
+    
+    if ([fileName hasPrefix:@"assets-library"]) {
+        NSArray *array = [fileName componentsSeparatedByString:@"ext="];
+        if (array.count != 0) {
+            extension = [array lastObject];
+        }
+    } else {
+        extension = [fileName pathExtension].lowercaseString;
+    }
+    
+    if (extension.length == 0) {
+        extension = @"unknown";
+    } else if ([extension isEqualToString:@"jpeg"]) {
+        extension = @"jpg";
+    } else if ([extension isEqualToString:@"pptx"]) {
+        extension = @"ppt";
+    } else if ([extension isEqualToString:@"docx"]) {
+        extension = @"doc";
+    } else if ([extension isEqualToString:@"xlsx"]) {
+        extension = @"xls";
+    } else if ([extension isEqualToString:@"rtf"]) {
+        extension = @"txt";
+    } else if ([self isCompressedFile:fileName]) {
+        extension = @"compress";
+    }
+    
+    
+    UIImage *iconImage = nil;
+    NSString *iconFileName = [NSString stringWithFormat:@"as_icon_file_%@.png", extension];
+    iconImage = [UIImage imageNamed:iconFileName];
+    if (iconImage == nil) {
+        
+        if ([self isVideoFile:fileName]) {
+            extension = @"video";
+        } else if ([self isAudioFile:fileName]) {
+            extension = @"audio";
+        } else if ([self isImageFile:fileName]) {
+            extension = @"image";
+        } else {
+            extension = @"unknown";
+        }
+        
+        iconFileName = [NSString stringWithFormat:@"as_icon_file_%@.png", extension];
+        iconImage = [UIImage imageNamed:iconFileName];
+        
+    }
+    
+    return iconImage;
+}
+
+
++ (UIImage *)getFileIcon:(id<ASFile>)file
+{
+    if ([file isKindOfClass:[ASDir class]]) {
+        return [UIImage imageNamed:@"as_icon_file_folder.png"];
+    } else {
+        return [ASFileUtils getFileIconOfName:file.name];
+    }
+}
+
+
+
+
 + (BOOL)checkFileExists:(NSString *)path
 {
     NSFileManager* fileManager = [NSFileManager defaultManager];
     return [fileManager fileExistsAtPath:path];
 }
+
+
 
 
 + (NSMutableArray *)localFilesAtPath:(NSString *)path
@@ -194,67 +263,14 @@
 
 
 
-+ (UIImage *)getFileIconOfName:(NSString *)fileName
++ (BOOL)deleteFileAtPath:(NSString *)path
 {
-    NSString *extension = nil;
-    
-    if ([fileName hasPrefix:@"assets-library"]) {
-        NSArray *array = [fileName componentsSeparatedByString:@"ext="];
-        if (array.count != 0) {
-            extension = [array lastObject];
-        }
-    } else {
-        extension = [fileName pathExtension].lowercaseString;
+    BOOL isExist = [ASFileUtils checkFileExists:path];
+    if (isExist) {
+        return [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
     }
     
-    if (extension.length == 0) {
-        extension = @"unknown";
-    } else if ([extension isEqualToString:@"jpeg"]) {
-        extension = @"jpg";
-    } else if ([extension isEqualToString:@"pptx"]) {
-        extension = @"ppt";
-    } else if ([extension isEqualToString:@"docx"]) {
-        extension = @"doc";
-    } else if ([extension isEqualToString:@"xlsx"]) {
-        extension = @"xls";
-    } else if ([extension isEqualToString:@"rtf"]) {
-        extension = @"txt";
-    } else if ([self isCompressedFile:fileName]) {
-        extension = @"compress";
-    }
-    
-    
-    UIImage *iconImage = nil;
-    NSString *iconFileName = [NSString stringWithFormat:@"as_icon_file_%@.png", extension];
-    iconImage = [UIImage imageNamed:iconFileName];
-    if (iconImage == nil) {
-        
-        if ([self isVideoFile:fileName]) {
-            extension = @"video";
-        } else if ([self isAudioFile:fileName]) {
-            extension = @"audio";
-        } else if ([self isImageFile:fileName]) {
-            extension = @"image";
-        } else {
-            extension = @"unknown";
-        }
-        
-        iconFileName = [NSString stringWithFormat:@"as_icon_file_%@.png", extension];
-        iconImage = [UIImage imageNamed:iconFileName];
-        
-    }
-    
-    return iconImage;
-}
-
-
-+ (UIImage *)getFileIcon:(id<ASFile>)file
-{
-    if ([file isKindOfClass:[ASDir class]]) {
-        return [UIImage imageNamed:@"as_icon_file_folder.png"];
-    } else {
-        return [ASFileUtils getFileIconOfName:file.name];
-    }
+    return NO;
 }
 
 

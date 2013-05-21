@@ -12,16 +12,16 @@
 
 @interface ASFileUtils : NSObject
 
++ (UIImage *)getFileIconOfName:(NSString *)fileName;
++ (UIImage *)getFileIcon:(id<ASFile>)file;
+
 + (BOOL)checkFileExists:(NSString *)path;
 
 + (NSMutableArray *)localFilesAtPath:(NSString *)path;
 + (NSMutableArray *)localFilesInDir:(ASDir *)dir;
 
 
-+ (UIImage *)getFileIconOfName:(NSString *)fileName;
-
-
-+ (UIImage *)getFileIcon:(id<ASFile>)file;
++ (BOOL)deleteFileAtPath:(NSString *)path;
 
 
 @end

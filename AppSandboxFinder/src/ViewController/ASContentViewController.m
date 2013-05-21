@@ -30,7 +30,7 @@
 {
     self = [self initWithNibName:nil bundle:nil];
     if (self) {
-        self.currentFile = file;
+        _currentFile = ASReturnRetained(file);
     }
     
     return self;

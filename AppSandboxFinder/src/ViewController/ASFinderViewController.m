@@ -13,10 +13,51 @@
 #import "ASFileUtils.h"
 
 @interface ASFinderViewController ()
+{
+    UIBarButtonItem *               _editBarButton;
+    UIActivityIndicatorView *       _refreshIndicatorView;
+}
+
+@property (nonatomic, retain) UIRefreshControl *        refreshControl;
 
 @end
 
 @implementation ASFinderViewController
+
+
+#pragma mark - Private
+- (void)beginRefreshs
+{
+    [self.refreshControl beginRefreshing];
+}
+
+- (void)endRefreshs
+{
+    [self.tableView reloadData];
+    [self.refreshControl endRefreshing];
+}
+
+
+
+#pragma mark - File Operation
+- (void)deleteItem:(id<ASFile>)item
+{
+    [ASFileUtils deleteFileAtPath:item.path];
+    [self.localFileList removeObject:item];
+}
+
+
+
+#pragma mark - Action
+- (void)pullToRefresh:(id)sender
+{
+    [self beginRefreshs];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        self.localFileList = [NSMutableArray arrayWithArray:[ASFileUtils localFilesAtPath:self.currentPath]];
+        [self performSelectorOnMainThread:@selector(endRefreshs) withObject:nil waitUntilDone:NO];
+    });
+    
+}
 
 
 #pragma mark - UIViewController
@@ -49,6 +90,7 @@
     self = [self initWithStyle:UITableViewStylePlain];
     if (nil != self) {
         _currentDir = [[ASDir alloc] initWithPath:path];
+        
     }
     
     return self;
@@ -61,8 +103,19 @@
     self.title = self.currentDir.name;
     
     self.clearsSelectionOnViewWillAppear = YES;
-    self.localFileList = [ASFileUtils localFilesAtPath:self.currentPath];
+    self.localFileList = [NSMutableArray arrayWithArray:[ASFileUtils localFilesAtPath:self.currentPath]];
     [self.tableView reloadData];
+    
+    self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    
+    if (NSClassFromString(@"UIRefreshControl")) {
+        UIRefreshControl * aRefreshControl = [[UIRefreshControl alloc] init];
+        [aRefreshControl addTarget:self action:@selector(pullToRefresh:) forControlEvents:UIControlEventValueChanged];
+        self.refreshControl = aRefreshControl;
+        ASRelease(aRefreshControl);
+    } else {
+        
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -80,6 +133,10 @@
 - (void)dealloc {
     ASRelease(_currentDir);
     ASRelease(_localFileList);
+    ASRelease(_refreshIndicatorView);
+    ASRelease(_refreshBarButton);
+    ASRelease(_refreshControl);
+
     [super dealloc];
 }
 #endif
@@ -130,7 +187,8 @@
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        
+        id<ASFile> delItem = [self.localFileList objectAtIndex:indexPath.row];
+        [self deleteItem:delItem];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }
     else if (editingStyle == UITableViewCellEditingStyleInsert) {
@@ -157,6 +215,11 @@
  */
 
 #pragma mark - Table view delegate
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 48;
+}
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
