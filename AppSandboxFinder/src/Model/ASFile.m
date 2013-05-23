@@ -33,8 +33,11 @@
     ASRelease(_name);
     ASRelease(_path);
     ASRelease(_fatherDir);
+    ASRelease(_ctime);
+    ASRelease(_mtime);
     [super dealloc];
 }
 #endif
+
 
 @end

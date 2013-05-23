@@ -24,4 +24,6 @@
 + (BOOL)deleteFileAtPath:(NSString *)path;
 
 
++ (NSString *)formatFileSize:(long long)byteSize;
+
 @end

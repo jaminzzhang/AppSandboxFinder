@@ -43,9 +43,6 @@
 
 #if ! __has_feature(objc_arc)
 - (void)dealloc {
-    ASRelease(_name);
-    ASRelease(_path);
-    ASRelease(_fatherDir);
     [super dealloc];
 }
 #endif

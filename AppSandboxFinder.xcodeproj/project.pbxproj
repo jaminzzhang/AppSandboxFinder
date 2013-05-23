@@ -22,7 +22,7 @@
 		ED16A6CD170D90F4002331BB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED16A6AE170D90F4002331BB /* Foundation.framework */; };
 		ED16A6D5170D90F4002331BB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = ED16A6D3170D90F4002331BB /* InfoPlist.strings */; };
 		ED16A6D8170D90F4002331BB /* AppSandboxFinderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = ED16A6D7170D90F4002331BB /* AppSandboxFinderTests.m */; };
-		EDA137121728D4E300D4A46A /* ASContentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EDA137111728D4E300D4A46A /* ASContentViewController.m */; };
+		ED50A303174E04790067CD2F /* ASFileDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = ED50A302174E04790067CD2F /* ASFileDetailViewController.m */; };
 		EDAFD69B173900FC00DD4493 /* as_icon_file_3gp.png in Resources */ = {isa = PBXBuildFile; fileRef = EDAFD60D173900FB00DD4493 /* as_icon_file_3gp.png */; };
 		EDAFD69C173900FC00DD4493 /* as_icon_file_3gp@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EDAFD60E173900FB00DD4493 /* as_icon_file_3gp@2x.png */; };
 		EDAFD69D173900FC00DD4493 /* as_icon_file_7z.png in Resources */ = {isa = PBXBuildFile; fileRef = EDAFD60F173900FB00DD4493 /* as_icon_file_7z.png */; };
@@ -202,9 +202,9 @@
 		ED16A6D4170D90F4002331BB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		ED16A6D6170D90F4002331BB /* AppSandboxFinderTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppSandboxFinderTests.h; sourceTree = "<group>"; };
 		ED16A6D7170D90F4002331BB /* AppSandboxFinderTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppSandboxFinderTests.m; sourceTree = "<group>"; };
+		ED50A301174E04790067CD2F /* ASFileDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASFileDetailViewController.h; sourceTree = "<group>"; };
+		ED50A302174E04790067CD2F /* ASFileDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ASFileDetailViewController.m; sourceTree = "<group>"; };
 		ED6A0D99172BC670001A521A /* ASConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASConstants.h; sourceTree = "<group>"; };
-		EDA137101728D4E300D4A46A /* ASContentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASContentViewController.h; sourceTree = "<group>"; };
-		EDA137111728D4E300D4A46A /* ASContentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ASContentViewController.m; sourceTree = "<group>"; };
 		EDAFD60D173900FB00DD4493 /* as_icon_file_3gp.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = as_icon_file_3gp.png; sourceTree = "<group>"; };
 		EDAFD60E173900FB00DD4493 /* as_icon_file_3gp@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "as_icon_file_3gp@2x.png"; sourceTree = "<group>"; };
 		EDAFD60F173900FB00DD4493 /* as_icon_file_7z.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = as_icon_file_7z.png; sourceTree = "<group>"; };
@@ -647,8 +647,8 @@
 			children = (
 				EDF01E6B171001D40003DEC1 /* ASFinderViewController.h */,
 				EDF01E6C171001D40003DEC1 /* ASFinderViewController.m */,
-				EDA137101728D4E300D4A46A /* ASContentViewController.h */,
-				EDA137111728D4E300D4A46A /* ASContentViewController.m */,
+				ED50A301174E04790067CD2F /* ASFileDetailViewController.h */,
+				ED50A302174E04790067CD2F /* ASFileDetailViewController.m */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -911,7 +911,7 @@
 				EDF01E6A1710018E0003DEC1 /* ASDir.m in Sources */,
 				EDF01E6D171001D40003DEC1 /* ASFinderViewController.m in Sources */,
 				ED02A789171012F500EED7D7 /* ASFileUtils.m in Sources */,
-				EDA137121728D4E300D4A46A /* ASContentViewController.m in Sources */,
+				ED50A303174E04790067CD2F /* ASFileDetailViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

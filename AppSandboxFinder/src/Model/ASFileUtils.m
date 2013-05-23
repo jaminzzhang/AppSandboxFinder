@@ -180,25 +180,42 @@
         
         NSMutableArray * subFiles = [NSMutableArray array];
         NSMutableArray * subDirs = [NSMutableArray array];
-        NSDirectoryEnumerator *dirEnumerator = [[NSFileManager defaultManager] enumeratorAtURL:[NSURL fileURLWithPath:dir.path]
-                                                                    includingPropertiesForKeys:nil
-                                                                                       options:(NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsHiddenFiles)
-                                                                                  errorHandler:nil];
+        NSFileManager * fileManager = [NSFileManager defaultManager];
+        
+        NSDirectoryEnumerator *dirEnumerator = [fileManager enumeratorAtURL:[NSURL fileURLWithPath:dir.path]
+                                                 includingPropertiesForKeys:nil
+                                                                    options:(NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsHiddenFiles)
+                                                               errorHandler:nil];
         for (NSURL *theURL in dirEnumerator) {
-            NSString *fileName;
+            NSString * fileName = nil;
             [theURL getResourceValue:&fileName forKey:NSURLNameKey error:NULL];
             
-            NSNumber *isDirectory;
+            NSNumber * isDirectory = nil;
             [theURL getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:NULL];
+            
+            NSNumber * fileSizeNum = nil;
+            [theURL getResourceValue:&fileSizeNum forKey:NSURLFileSizeKey error:NULL];
+            
+            NSDate * fileCreateTime = nil;
+            [theURL getResourceValue:&fileCreateTime forKey:NSURLCreationDateKey error:NULL];
+            
+            NSDate * fileModifyTime = nil;
+            [theURL getResourceValue:&fileModifyTime forKey:NSURLContentModificationDateKey error:NULL];
+            
+            
             
             NSString * subPath = [dir.path stringByAppendingPathComponent:fileName];
             
-            // Ignore subFiles under the _extras directory
             if ([isDirectory boolValue] == YES) {
                 ASDir *subDir = [[ASDir alloc] init];
                 subDir.name = fileName;
                 subDir.path = subPath;
+                subDir.size = [fileSizeNum longLongValue];
+                subDir.ctime = fileCreateTime;
+                subDir.mtime = fileModifyTime;
                 subDir.fatherDir = dir;
+                
+                subDir.childrenCount = [[fileManager contentsOfDirectoryAtPath:subPath error:nil] count];
                 
                 NSInteger dirCount = subDirs.count;
                 
@@ -226,6 +243,9 @@
                 ASFile *subFile = [[ASFile alloc] init];
                 subFile.name = fileName;
                 subFile.path = subPath;
+                subFile.size = [fileSizeNum longLongValue];
+                subFile.ctime = fileCreateTime;
+                subFile.mtime = fileModifyTime;
                 subFile.fatherDir = dir;
                 NSInteger filesCount = subFiles.count;
                 
@@ -274,5 +294,29 @@
 }
 
 
+
+
++ (NSString *)formatFileSize:(long long)byteSize
+{
+    NSInteger carryCount = -1;
+    double dSize = byteSize;
+    NSString * formatStr = nil;
+	char *s = "KMGTP";
+    
+    
+    
+    while (fabs(dSize) >= 1024.0 && carryCount < 5) {
+        dSize = dSize / 1024;
+        carryCount++;
+    }
+    
+    if (carryCount >= 0) {
+        formatStr = [NSString stringWithFormat:@"%.1f%cB", dSize, s[carryCount]];
+    } else {
+        formatStr = [NSString stringWithFormat:@"%.1fB", dSize];
+    }
+    
+    return formatStr;
+}
 
 @end

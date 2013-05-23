@@ -9,17 +9,11 @@
 #import <Foundation/Foundation.h>
 #import "ASFile.h"
 
-@interface ASDir : NSObject <ASFile>
+@interface ASDir : ASFile <ASFile>
 {
-    NSString *      _name;
-    NSString *      _path;
-    ASDir *         _fatherDir;
     NSInteger       _childrenCount;
 }
 
-@property (nonatomic, strong) NSString *    name;
-@property (nonatomic, strong) NSString *    path;
-@property (nonatomic, strong) ASDir *       fatherDir;
 @property (nonatomic, assign) NSInteger     childrenCount;
 
 - (id)initWithPath:(NSString *)path;

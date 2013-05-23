@@ -7,18 +7,19 @@
 //
 
 #import "ASFinderViewController.h"
-#import "ASContentViewController.h"
+#import "ASFileDetailViewController.h"
 
 #import "ASConstants.h"
 #import "ASFileUtils.h"
 
-@interface ASFinderViewController ()
+@interface ASFinderViewController () <UIDocumentInteractionControllerDelegate>
 {
     UIBarButtonItem *               _editBarButton;
     UIActivityIndicatorView *       _refreshIndicatorView;
 }
 
-@property (nonatomic, retain) UIRefreshControl *        refreshControl;
+@property (nonatomic, strong) UIRefreshControl *                    refreshControl;
+@property (nonatomic, strong) UIDocumentInteractionController *     documentInteractionController;
 
 @end
 
@@ -141,6 +142,17 @@
 }
 #endif
 
+#pragma mark - UIViewController Overide
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
+{
+    return YES;
+}
+
+
+- (BOOL)shouldAutorotate
+{
+    return YES;
+}
 
 #pragma mark - Setter & Getter
 - (NSString *)currentPath
@@ -167,12 +179,26 @@
     UITableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
     if (nil == cell) {
-        cell = ASReturnAutoreleased([[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier]);
+        cell = ASReturnAutoreleased([[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier]);
+        cell.textLabel.font = [UIFont systemFontOfSize:17.0f];
+        cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
     }
     id<ASFile> file = [self.localFileList objectAtIndex:indexPath.row];
     cell.textLabel.text = file.name;
     cell.imageView.image = [ASFileUtils getFileIcon:file];
     
+    if ([file isKindOfClass:[ASDir class]]) {
+        cell.detailTextLabel.text =  [NSString stringWithFormat:NSLocalizedString(@"%d Files", @"Files Count"), [(ASDir *)file childrenCount]];
+    } else {
+        cell.detailTextLabel.text =  [ASFileUtils formatFileSize:file.size];
+    }
+    
+//    NSString * subtitle = nil;
+//    if (nil != file.ctime) {
+//        subtitle = [NSString stringWithFormat:@"%@  %@", file.ctime, [ASFileUtils formatFileSize:file.size]];
+//    } else {
+//        subtitle = [ASFileUtils formatFileSize:file.size];
+//    }
     return cell;
 }
 // Override to support conditional editing of the table view.
@@ -198,27 +224,11 @@
 
 
 
-/*
- // Override to support rearranging the table view.
- - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
- {
- }
- */
-
-/*
- // Override to support conditional rearranging of the table view.
- - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
- {
- // Return NO if you do not want the item to be re-orderable.
- return YES;
- }
- */
-
 #pragma mark - Table view delegate
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 48;
+    return 50;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -230,10 +240,39 @@
         ASRelease(viewController);
         
     } else {
-        ASContentViewController *contentViewController = [[ASContentViewController alloc] initWithFile:file];
-        [self.navigationController pushViewController:contentViewController animated:YES];
-        ASRelease(contentViewController);
+        NSURL * fileURL = [NSURL fileURLWithPath:file.path];
+        [self.documentInteractionController dismissMenuAnimated:NO];
+        self.documentInteractionController = [UIDocumentInteractionController interactionControllerWithURL:fileURL];
+        self.documentInteractionController.delegate = self;
+        
+        UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+        [self.documentInteractionController presentOptionsMenuFromRect:cell.bounds inView:cell animated:YES];
+//        [self.documentInteractionController dismissPreviewAnimated:NO];
+//        
+//        BOOL canBePreviewed = [self.documentInteractionController presentPreviewAnimated:YES];
+//        if (!canBePreviewed) {
+//            // TODO：加入tips
+//            
+//            UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+//            [self.documentInteractionController presentOptionsMenuFromRect:cell.bounds inView:cell animated:YES];
+//        }
     }
+}
+
+
+- (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
+{
+    ASFileDetailViewController * detailViewController = [[ASFileDetailViewController alloc] initWithStyle:UITableViewStyleGrouped];
+    [self.navigationController pushViewController:detailViewController animated:YES];
+    ASRelease(detailViewController);
+}
+
+
+
+#pragma mark - UIDocumentInteractionControllerDelegate
+- (UIViewController *)documentInteractionControllerViewControllerForPreview:(UIDocumentInteractionController *)controller
+{
+    return self.navigationController;
 }
 
 
