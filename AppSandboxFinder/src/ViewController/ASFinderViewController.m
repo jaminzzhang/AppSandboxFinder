@@ -235,7 +235,7 @@
 {
     id<ASFile> file = [self.localFileList objectAtIndex:indexPath.row];
     if ([file isKindOfClass:[ASDir class]]) {
-        ASFinderViewController *viewController = [[ASFinderViewController alloc] initWithDir:file];
+        ASFinderViewController *viewController = [[ASFinderViewController alloc] initWithDir:(ASDir *)file];
         [self.navigationController pushViewController:viewController animated:YES];
         ASRelease(viewController);
         
@@ -262,7 +262,8 @@
 
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
 {
-    ASFileDetailViewController * detailViewController = [[ASFileDetailViewController alloc] initWithStyle:UITableViewStyleGrouped];
+    id<ASFile> file = [self.localFileList objectAtIndex:indexPath.row];
+    ASFileDetailViewController * detailViewController = [[ASFileDetailViewController alloc] initWithFile:file];
     [self.navigationController pushViewController:detailViewController animated:YES];
     ASRelease(detailViewController);
 }

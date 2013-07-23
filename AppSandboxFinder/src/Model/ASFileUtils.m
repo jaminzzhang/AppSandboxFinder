@@ -165,6 +165,15 @@
 
 
 
++ (BOOL)isDirAtPath:(NSString *)path
+{
+    NSFileManager* fileManager = [NSFileManager defaultManager];
+    BOOL isDir = NO;
+    BOOL isExists = [fileManager fileExistsAtPath:path isDirectory:&isDir];
+    return (isExists && isDir);
+}
+
+
 
 + (NSMutableArray *)localFilesAtPath:(NSString *)path
 {
@@ -201,6 +210,10 @@
             
             NSDate * fileModifyTime = nil;
             [theURL getResourceValue:&fileModifyTime forKey:NSURLContentModificationDateKey error:NULL];
+            
+            
+            NSString * typeIdentifier = nil;
+            [theURL getResourceValue:&typeIdentifier forKey:NSURLTypeIdentifierKey error:NULL];
             
             
             
@@ -243,6 +256,7 @@
                 ASFile *subFile = [[ASFile alloc] init];
                 subFile.name = fileName;
                 subFile.path = subPath;
+                subFile.typeIdentifier = typeIdentifier;
                 subFile.size = [fileSizeNum longLongValue];
                 subFile.ctime = fileCreateTime;
                 subFile.mtime = fileModifyTime;

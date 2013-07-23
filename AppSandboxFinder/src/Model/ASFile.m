@@ -22,6 +22,19 @@
 }
 
 
+
+- (id)initWithPath:(NSString *)path
+{
+    self = [self init];
+    if (self) {
+        _path = ASReturnCopyed(path);
+        _name = ASReturnCopyed([path lastPathComponent]);
+    }
+    
+    return self;
+}
+
+
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"%@<%p> name:%@ \n fatherDir:%@\n path:%@ \n size:%lld", NSStringFromClass([self class]), self, self.name, self.fatherDir, self.path, self.size];

@@ -16,6 +16,7 @@
 + (UIImage *)getFileIcon:(id<ASFile>)file;
 
 + (BOOL)checkFileExists:(NSString *)path;
++ (BOOL)isDirAtPath:(NSString *)path;
 
 + (NSMutableArray *)localFilesAtPath:(NSString *)path;
 + (NSMutableArray *)localFilesInDir:(ASDir *)dir;

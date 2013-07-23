@@ -15,28 +15,6 @@
 
 @protocol ASFile <NSObject>
 
-- (NSString *)name;
-- (NSString *)path;
-- (long long)size;
-- (NSDate *)ctime;
-- (NSDate *)mtime;
-- (ASDir *)fatherDir;
-
-@end
-
-@interface ASFile : NSObject <ASFile>
-{
-    NSString *      _name;
-    NSString *      _path;
-    NSDate *        _ctime;
-    NSDate *        _mtime;
-    long long       _size;
-    
-    
-    ASDir *         _fatherDir;
-}
-
-
 @property (nonatomic, strong) NSString *    name;
 @property (nonatomic, strong) NSString *    path;
 @property (nonatomic, strong) NSDate *      ctime;
@@ -44,5 +22,33 @@
 
 @property (nonatomic, assign) long long     size;
 @property (nonatomic, strong) ASDir *       fatherDir;
+
+
+- (id)initWithPath:(NSString *)path;
+
+@end
+
+@interface ASFile : NSObject <ASFile>
+{
+    NSString *      _name;
+    NSString *      _path;
+    NSString *      _typeIdentifier;
+    NSDate *        _ctime;
+    NSDate *        _mtime;
+    long long       _size;
+    
+    ASDir *         _fatherDir;
+}
+
+@property (nonatomic, strong) NSString *    name;
+@property (nonatomic, strong) NSString *    path;
+@property (nonatomic, strong) NSString *    typeIdentifier;
+@property (nonatomic, strong) NSDate *      ctime;
+@property (nonatomic, strong) NSDate *      mtime;
+
+
+@property (nonatomic, assign) long long     size;
+@property (nonatomic, strong) ASDir *       fatherDir;
+
 
 @end
