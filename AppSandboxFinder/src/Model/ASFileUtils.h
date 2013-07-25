@@ -18,8 +18,8 @@
 + (BOOL)checkFileExists:(NSString *)path;
 + (BOOL)isDirAtPath:(NSString *)path;
 
-+ (NSMutableArray *)localFilesAtPath:(NSString *)path;
-+ (NSMutableArray *)localFilesInDir:(ASDir *)dir;
++ (NSArray *)localFilesAtPath:(NSString *)path;
++ (NSArray *)localFilesInDir:(ASDir *)dir;
 
 
 + (BOOL)deleteFileAtPath:(NSString *)path;

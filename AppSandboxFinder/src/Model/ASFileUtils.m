@@ -175,14 +175,14 @@
 
 
 
-+ (NSMutableArray *)localFilesAtPath:(NSString *)path
++ (NSArray *)localFilesAtPath:(NSString *)path
 {
     ASDir * dir = ASReturnAutoreleased([[ASDir alloc] initWithPath:path]);
     return [ASFileUtils localFilesInDir:dir];
 }
 
 
-+ (NSMutableArray *)localFilesInDir:(ASDir *)dir
++ (NSArray *)localFilesInDir:(ASDir *)dir
 {
     BOOL isExist = [ASFileUtils checkFileExists:dir.path];
     if (isExist) {
