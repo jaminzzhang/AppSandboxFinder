@@ -7,6 +7,7 @@
 //
 
 #import "ASFileDetailViewController.h"
+#import "ASDBTablesViewController.h"
 #import "ASFileUtils.h"
 
 
@@ -48,7 +49,7 @@ typedef enum ASFileTimeRow : NSUInteger {
 
 
 
-@interface ASFileDetailViewController () <UIDocumentInteractionControllerDelegate>
+@interface ASFileDetailViewController () <UIActionSheetDelegate, UIDocumentInteractionControllerDelegate>
 
 @property (nonatomic, strong) UIDocumentInteractionController *     documentInteractionController;
 
@@ -114,6 +115,8 @@ typedef enum ASFileTimeRow : NSUInteger {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+
 #if ! __has_feature(objc_arc)
 - (void)dealloc {
     ASRelease(_documentInteractionController);
@@ -216,7 +219,11 @@ typedef enum ASFileTimeRow : NSUInteger {
                 case kASFileTimeRowCreateTime:
                 {
                     cell.textLabel.text = NSLocalizedString(@"创建时间", @"创建时间");
-                    cell.detailTextLabel.text = [self.currentItem.ctime description];
+                    NSString * cTimeStr = [self.currentItem.ctime description];
+                    if (cTimeStr.length > 19) {
+                        cTimeStr = [cTimeStr substringToIndex:19];
+                    }
+                    cell.detailTextLabel.text = cTimeStr;
                     cell.selectionStyle = UITableViewCellSelectionStyleNone;
                 }
                     break;
@@ -224,7 +231,11 @@ typedef enum ASFileTimeRow : NSUInteger {
                 case kASFileTimeRowModifyTime:
                 {
                     cell.textLabel.text = NSLocalizedString(@"修改时间", @"修改时间");
-                    cell.detailTextLabel.text = [self.currentItem.mtime description];
+                    NSString * mTimeStr = [self.currentItem.mtime description];
+                    if (mTimeStr.length > 19) {
+                        mTimeStr = [mTimeStr substringToIndex:19];
+                    }
+                    cell.detailTextLabel.text = mTimeStr;
                     cell.selectionStyle = UITableViewCellSelectionStyleNone;
                 }
                     break;                    
@@ -280,6 +291,7 @@ typedef enum ASFileTimeRow : NSUInteger {
         UITableViewCell *aCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:CellIdentifier];
         cell = ASReturnAutoreleased(aCell);
         cell.textLabel.font = [UIFont systemFontOfSize:17.0f];
+        cell.accessoryType = UITableViewCellAccessoryNone;
     }
     [self loadCell:cell ofIndexPath:indexPath];
     // Configure the cell...
@@ -297,17 +309,48 @@ typedef enum ASFileTimeRow : NSUInteger {
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+//    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
     if ([self.currentItem isMemberOfClass:[ASFile class]] && indexPath.section == kASFileSectionBaseInfo && kASFileBaseInfoRowOpenIn == indexPath.row) {
+        UIActionSheet * actionSheet = [[UIActionSheet alloc] initWithTitle:NSLocalizedString(@"打开方式", @"打开方式")
+                                                                  delegate:self
+                                                         cancelButtonTitle:NSLocalizedString(@"取消", @"取消")
+                                                    destructiveButtonTitle:nil
+                                                         otherButtonTitles:NSLocalizedString(@"以数据库文件打开", @"以数据库文件打开"),
+                                                                            NSLocalizedString(@"以纯文本文件打开", @"以纯文本文件打开"),
+                                                                            NSLocalizedString(@"其他打开方式", @"其他打开方式"), nil];
+        [actionSheet showInView:self.view];
+        ASRelease(actionSheet);
+    }
+}
+
+
+#pragma mark - UIActionSheetDelegate
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+
+    if (0 == buttonIndex) {
+        ASDBTablesViewController * dbTablesViewController = [[ASDBTablesViewController alloc] initWithDbPath:self.currentItem.path];
+        UINavigationController * navController = [[UINavigationController alloc] initWithRootViewController:dbTablesViewController];
+        [self.navigationController presentViewController:navController animated:YES completion:nil];
+        ASRelease(navController)
+        ASRelease(dbTablesViewController);
+        
+    } else if (1 == buttonIndex) {
+
+    } else if (2 == buttonIndex) {
         
         [self.documentInteractionController dismissMenuAnimated:NO];
         NSURL * fileURL = [NSURL fileURLWithPath:self.currentItem.path];
         self.documentInteractionController = [UIDocumentInteractionController interactionControllerWithURL:fileURL];
         self.documentInteractionController.delegate = self;
-        [self.documentInteractionController presentOptionsMenuFromRect:cell.bounds inView:cell animated:YES];
+        NSIndexPath * indexPath = [NSIndexPath indexPathForRow:kASFileBaseInfoRowOpenIn inSection:kASFileSectionBaseInfo];
+        UITableViewCell * cell = [self.tableView cellForRowAtIndexPath:indexPath];
+        if (nil != cell) {
+            [self.documentInteractionController presentOptionsMenuFromRect:cell.bounds inView:cell animated:YES];
+        }
     }
-}
 
+}
 
 #pragma mark - UIDocumentInteractionControllerDelegate
 - (UIViewController *)documentInteractionControllerViewControllerForPreview:(UIDocumentInteractionController *)controller

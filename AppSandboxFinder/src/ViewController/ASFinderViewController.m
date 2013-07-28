@@ -8,18 +8,20 @@
 
 #import "ASFinderViewController.h"
 #import "ASFileDetailViewController.h"
+#import "ASDBTablesViewController.h"
 
 #import "ASConstants.h"
 #import "ASFileUtils.h"
 
-@interface ASFinderViewController () <UIDocumentInteractionControllerDelegate>
+@interface ASFinderViewController () <UIDocumentInteractionControllerDelegate, UIActionSheetDelegate>
 {
     UIBarButtonItem *               _editBarButton;
     UIActivityIndicatorView *       _refreshIndicatorView;
 }
 
-@property (nonatomic, strong) UIRefreshControl *                    refreshControl;
-@property (nonatomic, strong) UIDocumentInteractionController *     documentInteractionController;
+@property(nonatomic, strong) UIRefreshControl *                     refreshControl;
+@property(nonatomic, strong) UIDocumentInteractionController *      documentInteractionController;
+@property(nonatomic, strong) NSIndexPath *                          longPressIndexPath;
 
 @end
 
@@ -58,6 +60,36 @@
         [self performSelectorOnMainThread:@selector(endRefreshs) withObject:nil waitUntilDone:NO];
     });
     
+}
+
+
+- (void)longPressAction:(UIGestureRecognizer *)gestureRecognizer
+{
+    if (gestureRecognizer.state == UIGestureRecognizerStateBegan) {
+        
+        CGPoint point = [gestureRecognizer locationInView:self.tableView];
+        NSIndexPath * indexPath = [self.tableView indexPathForRowAtPoint:point];
+        if (nil != indexPath) {
+
+            id<ASFile> fileObj = [self.localFileList objectAtIndex:indexPath.row];
+            if ([fileObj isKindOfClass:[ASDir class]]) {
+                return;
+            }
+
+            self.longPressIndexPath = indexPath;
+            UIActionSheet * actionSheet = [[UIActionSheet alloc] initWithTitle:NSLocalizedString(@"打开方式", @"打开方式")
+                                                                      delegate:self
+                                                             cancelButtonTitle:NSLocalizedString(@"取消", @"取消")
+                                                        destructiveButtonTitle:nil
+                                                             otherButtonTitles:NSLocalizedString(@"以数据库文件打开", @"以数据库文件打开"),
+                                           NSLocalizedString(@"以纯文本文件打开", @"以纯文本文件打开"),
+                                           NSLocalizedString(@"其他打开方式", @"其他打开方式"), nil];
+            [actionSheet showInView:self.view];
+            ASRelease(actionSheet);
+        }
+
+    }
+
 }
 
 
@@ -117,6 +149,12 @@
     } else {
         
     }
+
+    UILongPressGestureRecognizer * longPressGestureRecongnizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressAction:)];
+//    longPressGestureRecongnizer.minimumPressDuration = 2.0f;
+    
+    [self.tableView addGestureRecognizer:longPressGestureRecongnizer];
+    ASRelease(longPressGestureRecongnizer);
 }
 
 - (void)didReceiveMemoryWarning
@@ -137,6 +175,7 @@
     ASRelease(_refreshIndicatorView);
     ASRelease(_refreshBarButton);
     ASRelease(_refreshControl);
+    ASRelease(_longPressIndexPath);
 
     [super dealloc];
 }
@@ -276,5 +315,33 @@
     return self.navigationController;
 }
 
+
+#pragma mark - UIActionSheetDelegate
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    id<ASFile> file = [self.localFileList objectAtIndex:self.longPressIndexPath.row];
+    if (0 == buttonIndex) {
+        ASDBTablesViewController * dbTablesViewController = [[ASDBTablesViewController alloc] initWithDbPath:file.path];
+        UINavigationController * navController = [[UINavigationController alloc] initWithRootViewController:dbTablesViewController];
+        [self.navigationController presentViewController:navController animated:YES completion:nil];
+        ASRelease(navController)
+        ASRelease(dbTablesViewController);
+
+    } else if (1 == buttonIndex) {
+
+    } else if (2 == buttonIndex) {
+
+
+        NSURL * fileURL = [NSURL fileURLWithPath:file.path];
+        [self.documentInteractionController dismissMenuAnimated:NO];
+        self.documentInteractionController = [UIDocumentInteractionController interactionControllerWithURL:fileURL];
+        self.documentInteractionController.delegate = self;
+
+        UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:self.longPressIndexPath];
+        [self.documentInteractionController presentOptionsMenuFromRect:cell.bounds inView:cell animated:YES];
+    }
+
+
+}
 
 @end
