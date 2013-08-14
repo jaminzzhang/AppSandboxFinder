@@ -21,11 +21,20 @@
 
 @implementation ASDBTablesViewController
 
+
+#pragma mark - Action
+- (void)backAction:(id)sender
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+
+#pragma mark - UIViewController
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        // Custom initialization
+
     }
     return self;
 }
@@ -33,7 +42,7 @@
 
 - (id)initWithDbPath:(NSString *)path
 {
-    self = [super initWithNibName:nil bundle:nil];
+    self = [self initWithNibName:nil bundle:nil];
     if (self) {
         _dbPath = ASReturnRetained(path);
         _dbHandle = [[ASSqliteHandle alloc] initWithDbPath:path];
@@ -45,6 +54,15 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+
+    UIBarButtonItem *backBarButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"返回", @"返回")
+                                                                      style:UIBarButtonItemStyleBordered
+                                                                     target:self
+                                                                     action:@selector(backAction:)];
+    self.navigationItem.leftBarButtonItem = backBarButton;
+    ASRelease(backBarButton);
+
+
     self.title = [self.dbPath lastPathComponent];
     self.dbTables = [self.dbHandle getDbTableInfos];
 }

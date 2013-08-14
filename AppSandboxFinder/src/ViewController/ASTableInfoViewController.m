@@ -11,8 +11,11 @@
 
 @interface ASTableInfoViewController ()
 
-@property (nonatomic, strong) ASSqliteHandle *          dbHandle;
-@property (nonatomic, strong) NSString *                tableName;
+@property(nonatomic, strong) ASSqliteHandle *           dbHandle;
+@property(nonatomic, strong) NSString *                 tableName;
+
+@property(nonatomic, strong) UISearchBar *              searchBar;
+//@property(nonatomic, strong) 
 
 @end
 
