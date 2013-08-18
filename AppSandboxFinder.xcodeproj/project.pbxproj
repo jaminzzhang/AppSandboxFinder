@@ -27,6 +27,8 @@
 		ED1DB0E917A1662500BD2E5F /* ASSqliteHandle.mm in Sources */ = {isa = PBXBuildFile; fileRef = ED1DB0E817A1662500BD2E5F /* ASSqliteHandle.mm */; };
 		ED1DB0EB17A166B900BD2E5F /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = ED1DB0EA17A166B900BD2E5F /* libsqlite3.dylib */; };
 		ED50A303174E04790067CD2F /* ASFileDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = ED50A302174E04790067CD2F /* ASFileDetailViewController.m */; };
+		ED6BCE3417C1039500FFCAE4 /* ASTableDataViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = ED6BCE3317C1039500FFCAE4 /* ASTableDataViewController.m */; };
+		ED6BCE3717C1061E00FFCAE4 /* ASDBColumn.m in Sources */ = {isa = PBXBuildFile; fileRef = ED6BCE3617C1061E00FFCAE4 /* ASDBColumn.m */; };
 		EDAFD69B173900FC00DD4493 /* as_icon_file_3gp.png in Resources */ = {isa = PBXBuildFile; fileRef = EDAFD60D173900FB00DD4493 /* as_icon_file_3gp.png */; };
 		EDAFD69C173900FC00DD4493 /* as_icon_file_3gp@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EDAFD60E173900FB00DD4493 /* as_icon_file_3gp@2x.png */; };
 		EDAFD69D173900FC00DD4493 /* as_icon_file_7z.png in Resources */ = {isa = PBXBuildFile; fileRef = EDAFD60F173900FB00DD4493 /* as_icon_file_7z.png */; };
@@ -218,6 +220,10 @@
 		ED50A301174E04790067CD2F /* ASFileDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASFileDetailViewController.h; sourceTree = "<group>"; };
 		ED50A302174E04790067CD2F /* ASFileDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ASFileDetailViewController.m; sourceTree = "<group>"; };
 		ED6A0D99172BC670001A521A /* ASConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASConstants.h; sourceTree = "<group>"; };
+		ED6BCE3217C1039500FFCAE4 /* ASTableDataViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTableDataViewController.h; sourceTree = "<group>"; };
+		ED6BCE3317C1039500FFCAE4 /* ASTableDataViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ASTableDataViewController.m; sourceTree = "<group>"; };
+		ED6BCE3517C1061E00FFCAE4 /* ASDBColumn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASDBColumn.h; sourceTree = "<group>"; };
+		ED6BCE3617C1061E00FFCAE4 /* ASDBColumn.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ASDBColumn.m; sourceTree = "<group>"; };
 		EDAFD60D173900FB00DD4493 /* as_icon_file_3gp.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = as_icon_file_3gp.png; sourceTree = "<group>"; };
 		EDAFD60E173900FB00DD4493 /* as_icon_file_3gp@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "as_icon_file_3gp@2x.png"; sourceTree = "<group>"; };
 		EDAFD60F173900FB00DD4493 /* as_icon_file_7z.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = as_icon_file_7z.png; sourceTree = "<group>"; };
@@ -651,14 +657,16 @@
 		EDF01E631710014F0003DEC1 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				EDF01E65171001660003DEC1 /* ASFile.h */,
-				EDF01E66171001660003DEC1 /* ASFile.m */,
-				EDF01E681710018E0003DEC1 /* ASDir.h */,
-				EDF01E691710018E0003DEC1 /* ASDir.m */,
-				ED02A787171012F500EED7D7 /* ASFileUtils.h */,
-				ED02A788171012F500EED7D7 /* ASFileUtils.m */,
 				ED1DB0DE17A1638E00BD2E5F /* ASDatabaseUtils.h */,
 				ED1DB0DF17A1638E00BD2E5F /* ASDatabaseUtils.m */,
+				ED6BCE3517C1061E00FFCAE4 /* ASDBColumn.h */,
+				ED6BCE3617C1061E00FFCAE4 /* ASDBColumn.m */,
+				EDF01E681710018E0003DEC1 /* ASDir.h */,
+				EDF01E691710018E0003DEC1 /* ASDir.m */,
+				EDF01E65171001660003DEC1 /* ASFile.h */,
+				EDF01E66171001660003DEC1 /* ASFile.m */,
+				ED02A787171012F500EED7D7 /* ASFileUtils.h */,
+				ED02A788171012F500EED7D7 /* ASFileUtils.m */,
 				ED1DB0E717A1662500BD2E5F /* ASSqliteHandle.h */,
 				ED1DB0E817A1662500BD2E5F /* ASSqliteHandle.mm */,
 			);
@@ -678,6 +686,8 @@
 				EDE10AEE17A5001A00CD807E /* ASDBTablesViewController.m */,
 				EDE10AF017A5315300CD807E /* ASTableInfoViewController.h */,
 				EDE10AF117A5315300CD807E /* ASTableInfoViewController.m */,
+				ED6BCE3217C1039500FFCAE4 /* ASTableDataViewController.h */,
+				ED6BCE3317C1039500FFCAE4 /* ASTableDataViewController.m */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -935,9 +945,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				ED16A6B9170D90F4002331BB /* main.m in Sources */,
+				ED6BCE3417C1039500FFCAE4 /* ASTableDataViewController.m in Sources */,
 				EDE10AF217A5315300CD807E /* ASTableInfoViewController.m in Sources */,
 				ED1DB0E917A1662500BD2E5F /* ASSqliteHandle.mm in Sources */,
 				ED16A6BD170D90F4002331BB /* ASAppDelegate.m in Sources */,
+				ED6BCE3717C1061E00FFCAE4 /* ASDBColumn.m in Sources */,
 				EDF01E67171001660003DEC1 /* ASFile.m in Sources */,
 				EDF01E6A1710018E0003DEC1 /* ASDir.m in Sources */,
 				EDF01E6D171001D40003DEC1 /* ASFinderViewController.m in Sources */,

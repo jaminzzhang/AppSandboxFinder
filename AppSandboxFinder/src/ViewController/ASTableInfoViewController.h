@@ -7,10 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ASSqliteHandle.h"
 
 @interface ASTableInfoViewController : UIViewController
 
-- (id)initWithDBHandle:(ASSqliteHandle *)dbHandle withTableName:(NSString *)tableName;
+
+@property (nonatomic, strong) UITableView *     tableView;
+
+
 
 @end

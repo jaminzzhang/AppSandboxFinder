@@ -7,8 +7,9 @@
 //
 
 #import "ASDBTablesViewController.h"
-#import "ASSqliteHandle.h"
+#import "ASTableDataViewController.h"
 
+#import "ASSqliteHandle.h"
 #import "ASConstants.h"
 
 @interface ASDBTablesViewController ()
@@ -128,6 +129,11 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    NSString * tableName = self.dbTables[indexPath.row];
+    ASTableDataViewController * viewController = [[ASTableDataViewController alloc] initWithDBHandle:self.dbHandle
+                                                                                       withTableName:tableName];
+    [self.navigationController pushViewController:viewController animated:YES];
+    ASRelease(viewController);
     
 }
 

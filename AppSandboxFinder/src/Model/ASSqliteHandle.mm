@@ -18,6 +18,7 @@
 
 @implementation ASSqliteHandle
 
+#pragma mark - Lifecycle
 - (id)initWithDbPath:(NSString *)dbPath
 {
     self = [super init];
@@ -43,7 +44,7 @@
 #endif
 }
 
-
+#pragma mark - Public
 - (NSArray *)getDbTableInfos
 {
     NSArray * tablesResult = nil;
@@ -63,6 +64,58 @@
         return [name1 localizedStandardCompare:name2];
     }];
 }
+
+
+- (NSArray *)columnsOfTable:(NSString *)tableName
+{
+    NSArray * columnsResult = nil;
+    NSString * sqlStr = [NSString stringWithFormat:@"PRAGMA table_info(%@);", tableName];
+    [self queryResult:&columnsResult withSql:sqlStr];
+    NSLog(@"query tables:%@", columnsResult);
+
+    NSMutableArray * columnInfos = [NSMutableArray arrayWithCapacity:columnsResult.count];
+    for (NSDictionary * columnDict in columnsResult)
+    {
+        ASDBColumn * column = [[ASDBColumn alloc] init];
+        column.cid = [[columnDict objectForKey:@"cid"] integerValue];
+        column.name = [columnDict objectForKey:@"name"];
+        column.isNotNull = [[columnDict objectForKey:@"notnull"] boolValue];
+        column.isPK = [[columnDict objectForKey:@"pk"] boolValue];
+        column.type = [columnDict objectForKey:@"type"];
+
+        [columnInfos addObject:column];
+    }
+
+    return columnInfos;
+}
+
+
+
+- (NSArray *)queryTableRows:(NSString *)tableName
+              orderByColumn:(NSString *)columnName
+                    inOrder:(NSComparisonResult)order
+                  withLimit:(NSInteger)limit
+{
+
+    NSAssert((nil != tableName), @"table name can't be nil!");
+
+    limit = (limit > 0 ? limit : NSUIntegerMax);
+
+    NSArray * rowsResult = nil;
+    NSString * sqlStr = nil;
+    if (nil != columnName) {
+        NSString * dbOrder = [NSString stringWithFormat:@"ORDER BY %@ %@ ", columnName, [self dbOrderOfComparion:order]];
+        sqlStr = [NSString stringWithFormat:@"SELECT * FROM %@ %@ LIMIT %d;", tableName, dbOrder, limit];
+    } else {
+        sqlStr = [NSString stringWithFormat:@"SELECT * FROM %@ LIMIT %d;", tableName, limit];
+    }
+
+    [self queryResult:&rowsResult withSql:sqlStr];
+    NSLog(@"query tables:%@", rowsResult);
+
+    return rowsResult;
+}
+
 
 
 - (BOOL)queryResult:(NSArray **)result withSql:(NSString *)sql
@@ -136,6 +189,16 @@
 - (void)closeDb
 {
 	sqlite3_close(_sqliteDB);
+}
+
+#pragma mark - Private
+- (NSString *)dbOrderOfComparion:(NSComparisonResult)comparsion
+{
+    if (comparsion == NSOrderedDescending) {
+        return @"DESC";
+    } else {
+        return @"ASC";
+    }
 }
 
 @end

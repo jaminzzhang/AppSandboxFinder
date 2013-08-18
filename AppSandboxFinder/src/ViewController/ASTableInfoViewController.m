@@ -9,13 +9,11 @@
 #import "ASTableInfoViewController.h"
 #import "ASConstants.h"
 
+
 @interface ASTableInfoViewController ()
 
-@property(nonatomic, strong) ASSqliteHandle *           dbHandle;
-@property(nonatomic, strong) NSString *                 tableName;
 
-@property(nonatomic, strong) UISearchBar *              searchBar;
-//@property(nonatomic, strong) 
+//@property(nonatomic, strong)
 
 @end
 
@@ -25,28 +23,24 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        // Custom initialization
+
     }
     return self;
 }
 
 
-- (id)initWithDBHandle:(ASSqliteHandle *)dbHandle withTableName:(NSString *)tableName
-{
-    self = [self initWithNibName:nil bundle:nil];
-    if (nil != self) {
-        _dbHandle = ASReturnRetained(dbHandle);
-        _tableName = ASReturnRetained(tableName);
-    }
-
-    return self;
-}
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+    UITableView * tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
+    tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    tableView.backgroundColor = [UIColor clearColor];
+    [self.view addSubview:tableView];
+    self.tableView = tableView;
+    ASRelease(tableView);
 }
+
 
 - (void)didReceiveMemoryWarning
 {
@@ -56,8 +50,7 @@
 
 #if ! __has_feature(objc_arc)
 - (void)dealloc {
-    ASRelease(_tableName);
-    ASRelease(_dbHandle);
+    ASRelease(_tableView);
     [super dealloc];
 }
 #endif
