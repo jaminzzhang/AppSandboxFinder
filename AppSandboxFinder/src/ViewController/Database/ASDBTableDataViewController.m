@@ -1,19 +1,24 @@
 //
-//  ASTableDataViewController.m
+//  ASDBTableDataViewController.m
 //  AppSandboxFinder
 //
 //  Created by Jamin on 8/18/13.
 //  Copyright (c) 2013 Jaminz. All rights reserved.
 //
 
-#import "ASTableDataViewController.h"
 #import "ASConstants.h"
 
-@interface ASTableDataViewController ()
+#import "ASDBTableDataViewController.h"
+#import "ASDBTableRowDataViewController.h"
+
+static CGFloat const kCellTextFontSize = 16.0f;
+
+
+@interface ASDBTableDataViewController ()
 
 
 @property (nonatomic, strong) ASSqliteHandle *              dbHandle;
-@property (nonatomic, strong) NSString *                    tableName;
+@property (nonatomic, strong) ASDBTable *                   dbTable;
 @property (nonatomic, strong) NSArray *                     columnList;         // ASDBColumn Info
 @property (nonatomic, strong) NSArray *                     allRowList;         // All table data
 @property (nonatomic, strong) NSArray *                     resultRowList;      // the showed data after sorted or filter
@@ -26,7 +31,7 @@
 
 @end
 
-@implementation ASTableDataViewController
+@implementation ASDBTableDataViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -39,14 +44,14 @@
 }
 
 
-- (id)initWithDBHandle:(ASSqliteHandle *)dbHandle withTableName:(NSString *)tableName
+- (id)initWithDBHandle:(ASSqliteHandle *)dbHandle withDBTable:(ASDBTable *)table
 {
     self = [self initWithNibName:nil bundle:nil];
     if (nil != self) {
         _dbHandle = ASReturnRetained(dbHandle);
-        _tableName = ASReturnRetained(tableName);
-        _columnList = ASReturnRetained([_dbHandle columnsOfTable:_tableName]);
-        NSArray * rowList = [_dbHandle queryTableRows:tableName orderByColumn:nil inOrder:NSOrderedAscending withLimit:-1];
+        _dbTable = ASReturnRetained(table);
+        _columnList = ASReturnRetained([_dbHandle columnsOfTable:table.name]);
+        NSArray * rowList = [_dbHandle queryTableRows:table.name orderByColumn:nil inOrder:NSOrderedAscending withLimit:-1];
         _allRowList = ASReturnRetained(rowList);
         _resultRowList = ASReturnRetained(_allRowList);
     }
@@ -58,6 +63,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.title = self.dbTable.name;
 
     UITableView * tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
     tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -77,7 +83,8 @@
 }
 
 #if ! __has_feature(objc_arc)
-- (void)dealloc {
+- (void)dealloc
+{
     ASRelease(_tableName);
     ASRelease(_dbHandle);
     ASRelease(_columnList);
@@ -92,6 +99,13 @@
 }
 #endif
 
+#pragma mark - Override
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [self.dataTableView deselectRowAtIndexPath:[self.dataTableView indexPathForSelectedRow] animated:YES];
+}
+
 #pragma mark - Databse table data
 - (id)valueOfColumn:(NSString *)column atRow:(NSInteger)rowIndex
 {
@@ -101,6 +115,19 @@
     return value;
 }
 
+- (NSString *)rowDataString:(NSInteger)row
+{
+    NSString * rowStr = @"";
+    for (ASDBColumn * dbColumn in self.columnList) {
+        NSString * columnName = [dbColumn name];
+        id value = [self valueOfColumn:columnName atRow:row];
+        if (nil != value) {
+            NSString * valueStr = [NSString stringWithFormat:@"%@ | ", value];
+            rowStr = [rowStr stringByAppendingString:valueStr];
+        }
+    }
+    return rowStr;
+}
 
 
 #pragma mark - Table view data source
@@ -124,36 +151,36 @@
     if (nil == cell) {
         UITableViewCell *aCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:CellIdentifier];
         cell = ASReturnAutoreleased(aCell);
-        cell.textLabel.font = [UIFont systemFontOfSize:17.0f];
+        cell.clipsToBounds = YES;
+        cell.textLabel.font = [UIFont systemFontOfSize:kCellTextFontSize];
+        cell.textLabel.numberOfLines = 0;
+        cell.textLabel.lineBreakMode = NSLineBreakByCharWrapping;
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
 
-    NSString * rowStr = @"";
-    for (ASDBColumn * dbColumn in self.columnList) {
-        NSString * columnName = [dbColumn name];
-        id value = [self valueOfColumn:columnName atRow:indexPath.row];
-        if (nil != value) {
-            NSString * valueStr = [NSString stringWithFormat:@"%@ | ", value];
-            rowStr = [rowStr stringByAppendingString:valueStr];
-        }
-    }
-    cell.textLabel.text = rowStr;
-
-    // Configure the cell...
-
+    cell.textLabel.text = [self rowDataString:indexPath.row];
     return cell;
 }
 
 
 #pragma mark - Table view delegate
 
-//- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-//{
-//    return 50;
-//}
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSString * rowStr = [self rowDataString:indexPath.row];
+    CGSize size = [rowStr sizeWithFont:[UIFont systemFontOfSize:kCellTextFontSize]
+                     constrainedToSize:CGSizeMake(tableView.frame.size.width - 40, 320)
+                         lineBreakMode:NSLineBreakByCharWrapping];
+    return size.height + 20;
+}
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    NSDictionary * rowData = self.resultRowList[indexPath.row];
+    ASDBTableRowDataViewController * viewController =
+        [[ASDBTableRowDataViewController alloc] initWithRowData:rowData withColumnList:self.columnList];
+    [self.navigationController pushViewController:viewController animated:YES];
+    ASRelease(viewController);
 
 }
 
