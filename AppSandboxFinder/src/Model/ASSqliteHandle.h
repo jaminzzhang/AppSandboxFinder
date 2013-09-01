@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <sqlite3.h>
 
+#import "ASDBTable.h"
 #import "ASDBColumn.h"
 
 @interface ASSqliteHandle : NSObject

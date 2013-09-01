@@ -52,16 +52,19 @@
     [self queryResult:&tablesResult withSql:sqlStr];
     NSLog(@"query tables:%@", tablesResult);
 
-    NSMutableArray * tableNames = [NSMutableArray arrayWithCapacity:(tablesResult.count - 1)];
+    NSMutableArray * dbTables = [NSMutableArray arrayWithCapacity:(tablesResult.count - 1)];
     for (NSDictionary * tableRecord in tablesResult) {
-        NSString * name = [tableRecord objectForKey:@"name"];
-        if (nil != name) {
-            [tableNames addObject:name];
-        }
+        ASDBTable * table = [[ASDBTable alloc] init];
+        table.name = [tableRecord objectForKey:@"name"];
+        table.tbl_name = [tableRecord objectForKey:@"tbl_name"];
+        table.rootpage = [[tableRecord objectForKey:@"rootpage"] integerValue];
+        table.sql = [tableRecord objectForKey:@"sql"];
+        [dbTables addObject:table];
+        ASRelease(table);
     }
 
-    return [tableNames sortedArrayUsingComparator:^NSComparisonResult(NSString * name1, NSString * name2) {
-        return [name1 localizedStandardCompare:name2];
+    return [dbTables sortedArrayUsingComparator:^NSComparisonResult(ASDBTable * table1, ASDBTable * table2) {
+        return [table1.name localizedStandardCompare:table2.name];
     }];
 }
 

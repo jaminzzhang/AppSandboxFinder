@@ -13,6 +13,10 @@
 
 
 
+//check iOS system version
+#pragma mark - iOS Version
+
+
 #define SYSTEM_VERSION_EQUAL_TO(v)                  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedSame)
 #define SYSTEM_VERSION_GREATER_THAN(v)              ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedDescending)
 #define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
@@ -20,8 +24,11 @@
 #define SYSTEM_VERSION_LESS_THAN_OR_EQUAL_TO(v)     ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedDescending)
 
 
+// macro of ARC compatibility
+#pragma mark - ARC
 
-#if ! __has_feature(objc_arc)
+
+#if ! __has_feature(objc_arc) // No ARC
 
 
 #define ASAutorelease(__v)                  ([__v autorelease])
@@ -40,6 +47,7 @@
 
 #else
 
+
 #define ASAutorelease(__v)
 #define ASReturnAutoreleased(__v)           (__v)
 
@@ -53,7 +61,16 @@
 
 #define ASRelease(__v)
 
+
+
+#endif //end
+
+
+
+
+
 #endif
 
 
-#endif
+
+
